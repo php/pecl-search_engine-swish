@@ -1,0 +1,14 @@
+// $Id$
+// vim:ft=javascript
+
+ARG_WITH("swish", "Swish-e support", "yes");
+
+if (PHP_SWISH == "yes") {
+	if (CHECK_LIB("libswish-e.lib", "swish") &&
+			CHECK_HEADER_ADD_INCLUDE("swish-e.h", "CFLAGS_SWISH")) {
+
+		EXTENSION("swish", "swish.c");
+	}
+}
+
+

@@ -61,7 +61,7 @@ struct php_sw_result {
 	SW_RESULT r;
 };
 
-static int sw_throw_exception(struct php_sw_handle *h TSRMLS_CC)
+static int sw_throw_exception(struct php_sw_handle *h TSRMLS_DC)
 {
 	if (SwishError(h->h)) {
 		char *msg = SwishLastErrorMsg(h->h);
@@ -373,7 +373,6 @@ static PHP_METHOD(SwishResults, nextResult)
 {
 	struct php_sw_results *r;
 	struct php_sw_result *result;
-	long l;
 	SW_RESULT res;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -519,7 +518,7 @@ static void sw_handle_dtor(void *object TSRMLS_DC)
 		h->h = NULL;
 	}
 	
-	obj_fini(&h->std);
+	obj_fini(&h->std TSRMLS_CC);
 
 	efree(h);
 }
@@ -535,7 +534,7 @@ static void sw_search_dtor(void *object TSRMLS_DC)
 
 	zend_objects_store_del_ref(&s->refhandle TSRMLS_CC);	
 	
-	obj_fini(&s->std);
+	obj_fini(&s->std TSRMLS_CC);
 	efree(s);
 }
 
@@ -550,7 +549,7 @@ static void sw_results_dtor(void *object TSRMLS_DC)
 
 	zend_objects_store_del_ref(&r->refhandle TSRMLS_CC);	
 	
-	obj_fini(&r->std);
+	obj_fini(&r->std TSRMLS_CC);
 	efree(r);
 }
 
@@ -559,7 +558,7 @@ static void sw_result_dtor(void *object TSRMLS_DC)
 	struct php_sw_result *r = (struct php_sw_result*)object;
 
 	zend_objects_store_del_ref(&r->refhandle TSRMLS_CC);	
-	obj_fini(&r->std);
+	obj_fini(&r->std TSRMLS_CC);
 	efree(r);
 }
 
@@ -567,10 +566,9 @@ static zend_object_value sw_handle_new(zend_class_entry *ce TSRMLS_DC)
 {
 	struct php_sw_handle *h;
 	zend_object_value retval;
-	zval *tmp;
 
 	h = ecalloc(1, sizeof(*h));
-	obj_init(&h->std, ce);
+	obj_init(&h->std, ce TSRMLS_CC);
 	retval.handle = zend_objects_store_put(h,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
 			sw_handle_dtor,
@@ -583,10 +581,9 @@ static zend_object_value sw_search_new(zend_class_entry *ce TSRMLS_DC)
 {
 	struct php_sw_search *s;
 	zend_object_value retval;
-	zval *tmp;
 
 	s = ecalloc(1, sizeof(*s));
-	obj_init(&s->std, ce);
+	obj_init(&s->std, ce TSRMLS_CC);
 
 	retval.handle = zend_objects_store_put(s,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
@@ -600,10 +597,9 @@ static zend_object_value sw_results_new(zend_class_entry *ce TSRMLS_DC)
 {
 	struct php_sw_results *r;
 	zend_object_value retval;
-	zval *tmp;
 
 	r = ecalloc(1, sizeof(*r));
-	obj_init(&r->std, ce);
+	obj_init(&r->std, ce TSRMLS_CC);
 
 	retval.handle = zend_objects_store_put(r,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
@@ -617,10 +613,9 @@ static zend_object_value sw_result_new(zend_class_entry *ce TSRMLS_DC)
 {
 	struct php_sw_result *r;
 	zend_object_value retval;
-	zval *tmp;
 
 	r = ecalloc(1, sizeof(*r));
-	obj_init(&r->std, ce);
+	obj_init(&r->std, ce TSRMLS_CC);
 
 	retval.handle = zend_objects_store_put(r,
 			(zend_objects_store_dtor_t)zend_objects_destroy_object,
@@ -640,7 +635,7 @@ PHP_MINIT_FUNCTION(swish)
 	
 	INIT_CLASS_ENTRY(ce, "SwishException", NULL);
 	ce_sw_exception = zend_register_internal_class_ex(&ce, 
-				zend_exception_get_default(), NULL TSRMLS_CC);
+				zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "SwishHandle", sw_handle_methods);
 	ce_sw_handle = zend_register_internal_class(&ce TSRMLS_CC);
