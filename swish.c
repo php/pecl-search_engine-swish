@@ -179,11 +179,112 @@ static PHP_METHOD(SwishHandle, query)
 }
 /* }}} */
 
+/* {{{ proto array SwishHandle::getHeaderNames()
+   Returns an array of available header names */
+static PHP_METHOD(SwishHandle, getHeaderNames)
+{
+	struct php_sw_handle *h;
+	const char **names;
+
+	h = (struct php_sw_handle*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	names = SwishHeaderNames(h->h);
+	array_init(return_value);
+	while (*names) {
+		add_next_index_string(return_value, (char*)*names, 1);
+		names++;
+	}
+}
+/* }}} */
+
+/* {{{ proto array SwishHandle::getIndexNames()
+   Returns an array of available index names */
+static PHP_METHOD(SwishHandle, getIndexNames)
+{
+	struct php_sw_handle *h;
+	const char **names;
+
+	h = (struct php_sw_handle*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	names = SwishIndexNames(h->h);
+	array_init(return_value);
+	while (*names) {
+		add_next_index_string(return_value, (char*)*names, 1);
+		names++;
+	}
+}
+/* }}} */
+
+
+static void fill_property_list(zval *return_value, SWISH_META_LIST meta TSRMLS_DC)
+{
+	zval *obj;
+
+	array_init(return_value);
+	while (*meta) {
+		MAKE_STD_ZVAL(obj);
+		object_init(obj);
+
+		add_assoc_string(obj, "Name", (char*)SwishMetaName(*meta), 1);
+		add_assoc_long(obj, "Type", SwishMetaType(*meta));
+		add_assoc_long(obj, "ID", SwishMetaID(*meta));
+
+		add_next_index_zval(return_value, obj);
+		meta++;
+	}
+}
+
+/* {{{ proto array SwishHandle::getMetaList(string indexname)
+   Returns an array of meta information for a named index */
+static PHP_METHOD(SwishHandle, getMetaList)
+{
+	struct php_sw_handle *h;
+	char *index_name;
+	int len;
+	SWISH_META_LIST meta;
+
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+				"s", &index_name, &len)) {
+		return;
+	}
+
+	h = (struct php_sw_handle*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	meta = SwishMetaList(h->h, index_name);
+	fill_property_list(return_value, meta TSRMLS_CC);
+}
+/* }}} */
+
+/* {{{ proto array SwishHandle::getPropertyList(string indexname)
+   Returns an array of property information for a named index */
+static PHP_METHOD(SwishHandle, getPropertyList)
+{
+	struct php_sw_handle *h;
+	char *index_name;
+	int len;
+	SWISH_META_LIST meta;
+
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+				"s", &index_name, &len)) {
+		return;
+	}
+
+	h = (struct php_sw_handle*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	meta = SwishPropertyList(h->h, index_name);
+	fill_property_list(return_value, meta TSRMLS_CC);
+}
+/* }}} */
+
 
 static zend_function_entry sw_handle_methods[] = {
 	PHP_ME(SwishHandle, __construct, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(SwishHandle, prepare, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(SwishHandle, query, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishHandle, getHeaderNames, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishHandle, getIndexNames, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishHandle, getMetaList, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishHandle, getPropertyList, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 
@@ -443,7 +544,33 @@ static PHP_METHOD(SwishResult, property)
 }
 /* }}} */
 
+/* {{{ proto array SwishResult::getMetaList()
+   Returns an array of meta information for the result */
+static PHP_METHOD(SwishResult, getMetaList)
+{
+	struct php_sw_result *r;
+	SWISH_META_LIST meta;
 
+	r = (struct php_sw_result*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	meta = SwishResultMetaList(r->r);
+	fill_property_list(return_value, meta TSRMLS_CC);
+}
+/* }}} */
+
+/* {{{ proto array SwishResult::getPropertyList()
+   Returns an array of property information for the result */
+static PHP_METHOD(SwishResult, getPropertyList)
+{
+	struct php_sw_result *r;
+	SWISH_META_LIST meta;
+
+	r = (struct php_sw_result*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+	meta = SwishResultPropertyList(r->r);
+	fill_property_list(return_value, meta TSRMLS_CC);
+}
+/* }}} */
 
 static zend_function_entry sw_results_methods[] = {
 	PHP_ME(SwishResults, getHits, NULL, ZEND_ACC_PUBLIC)
@@ -454,6 +581,8 @@ static zend_function_entry sw_results_methods[] = {
 
 static zend_function_entry sw_result_methods[] = {
 	PHP_ME(SwishResult, property, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishResult, getMetaList, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(SwishResult, getPropertyList, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 
