@@ -33,61 +33,65 @@ Now build this PHP module:
 Then you can code up an interface to the index using PHP:
 
 <?php
-$h = new SwishHandle("index.swish-e");
+$h = new Swish("index.swish-e");
 $results = $h->query("lemons");
-echo "There are ", $results->getHits(), " lemons\n";
+echo "There are ", $results->hits, " lemons\n";
 while ($r = $results->nextResult()) {
 	printf("in file %s, relevance %d\n",
-		$r->property("swishdocpath"),
-		$r->property("swishrank")
+		$r->swishdocpath,
+		$r->swishrank
 		);
 }
 ?>
 
 Brief API reference:
 ====================
-(grep -C1 proto swish.c)
-
 See http://swish-e.org/docs/swish-library.html for more background.
 
-void SwishHandle::__construct(string indices)
-   Open a swish index */
+/* major handle class */
 
-SwishSearch SwishHandle::prepare([string query])
-   Returns a new search object */
+class Swish {
+	public indexes = array(); //indexes and their properties
 
-SwishResults SwishHandle::query(string query)
-   Executes a search, returning the result object */   
+	SwishSearch prepare([string query]);
+	SwishResult query(string query);
 
-void SwishSearch::setStructure(int structure)
-   Sets the "structure" flag in the search object */
+	array getMetaList(string indexname);     
+	array getPropertyList(string indexname); 
+}
 
-void SwishSearch::setPhraseDelimiter(string delim)
-   Sets the phrase delimiter character, the default is double-quotes. */
+/* search handle class */
 
-void SwishSearch::setSort(string sort)
-   Sets the sort order of the results */
+class SwishSearch {
+	void setStructure(string structure);
+	void setPhraseDelimiter(string delimiter_char);
+	void setSort(string sort_string);
+	void setLimit(string sort_string);
+	void resetLimit();
+}
 
-void SwishSearch::setSearchLimit(string prop, string low, string hi)
-   Sets the limit parameters for a search */
+/* search results class */
 
-void SwishSearch::resetSearchLimit()
-   resets the limit parameters for a search */
+class SwishResults {
+	public hits = 0;
+	public indexes = array();
 
-SwishSearch SwishSearch::execute([string query])
-   Returns a new search object */
+	SwishResult nextResult();
+	int seekResult(int position);
+	array getParsedWords(string indexname);
+	array getRemovedStopWords(string indexname);
+}
 
-void SwishResults::getHits()
-   Returns the number of results in the results object. */
+/* search result class */
 
-long SwishResults::seekResult(long position)
-   Sets the current seek position in the list of results. 0 is the first. Returns negative number on error */
+class SwishResult {
+	/* 
+	   properties defined by Swish, 
+	   automatically "converted" to object properties
+	*/
 
-SwishResult SwishResults::nextResult()
-   Advances to the next result.  Returns false when there are no more results. */
-
-mixed SwishResult::property(string prop)
-   Returns the value of a property */
-
+	array getMetaList(); 
+	array stem(string word);
+}
 
 vim:ts=2:sw=2:et:
