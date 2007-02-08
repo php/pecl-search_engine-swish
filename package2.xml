@@ -5,9 +5,9 @@ http://pear.php.net/dtd/package-2.0
 http://pear.php.net/dtd/package-2.0.xsd">
  <name>swish</name>
  <channel>pecl.php.net</channel>
- <summary>Swish-e functions</summary>
+ <summary>Swish-e bindings</summary>
  <description>
-  This extension provides bindings to the swish-e API.
+  This extension provides bindings to the Swish-e API.
 
   Swish-e is a GPL licensed search engine, with a clause that allows applications
   to link against the libswish-e library to use the published API to do so
@@ -29,8 +29,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>wez@php.net</email>
   <active>yes</active>
  </lead>
- <date>2007-02-28</date>
- <time>19:52:26</time>
+ <date>2007-02-08</date>
+ <time>16:00:00</time>
  <version>
   <release>0.1</release>
   <api>0.1</api>
