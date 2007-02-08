@@ -68,6 +68,7 @@ class SwishSearch {
 	void setSort(string sort_string);
 	void setLimit(string sort_string);
 	void resetLimit();
+	SwishResults execute([string query]);
 }
 
 /* search results class */
