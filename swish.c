@@ -601,6 +601,11 @@ static PHP_METHOD(Swish, __construct)
 
 	h = (struct php_sw_handle*)zend_object_store_get_object(object TSRMLS_CC);
 
+	if (h->h) {
+		/* called __construct() twice, bail out */
+		return;
+	}
+
 	h->h = SwishInit(indices);
 
 	if (sw_throw_exception(h TSRMLS_CC)) {
