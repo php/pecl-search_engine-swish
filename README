@@ -63,10 +63,10 @@ class Swish {
 /* search handle class */
 
 class SwishSearch {
-	void setStructure(string structure);
+	void setStructure(int structure);
 	void setPhraseDelimiter(string delimiter_char);
 	void setSort(string sort_string);
-	void setLimit(string sort_string);
+	void setLimit(string property, string low, string high);
 	void resetLimit();
 	SwishResults execute([string query]);
 }
