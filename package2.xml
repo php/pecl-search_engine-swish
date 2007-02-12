@@ -29,19 +29,21 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>wez@php.net</email>
   <active>yes</active>
  </lead>
- <date>2007-02-08</date>
+ <license uri="http://www.php.net/license">PHP</license>
+ <date>2007-02-28</date>
  <time>16:00:00</time>
  <version>
-  <release>0.1</release>
-  <api>0.1</api>
+  <release>0.2</release>
+  <api>0.2</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
- <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  Initial PECL release.
+  - Added missing IN_ALL constant.
+  - Changed constants to be class constants.
+  - Fixed Swish::__construct() to prevent calling it twice.
  </notes>
  <contents>
   <dir name="/">
@@ -95,4 +97,21 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <extsrcrelease>
   <configureoption default="autodetect" name="with-swish" prompt="Please provide the path to swish-config" />
  </extsrcrelease>
+ <changelog>
+  <release>
+   <license uri="http://www.php.net/license">PHP</license>
+   <date>2007-02-08</date>
+   <version>
+    <release>0.1</release>
+    <api>0.1</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <notes>
+    Initial PECL release.
+   </notes>
+  </release>
+ </changelog>
 </package>
