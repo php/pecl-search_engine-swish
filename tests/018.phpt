@@ -8,19 +8,19 @@ SwishSearch::setStructure() tests
 $h = new Swish(dirname(__FILE__)."/index.swish-e");
 
 $s = $h->prepare("test");
-$s->setStructure(SWISH_IN_FILE); //the default one
+$s->setStructure(Swish::IN_FILE); //the default one
 $rs = $s->execute("", "");
 $rs = $s->execute();
 
 var_dump($rs->hits);
 
 $s = $h->prepare("test");
-$s->setStructure(SWISH_IN_TITLE); 
+$s->setStructure(Swish::IN_TITLE); 
 $rs = $s->execute();
 
 var_dump($rs->hits);
 
-$s->setStructure(SWISH_IN_TITLE,1); 
+$s->setStructure(Swish::IN_TITLE,1); 
 
 echo "Done\n";
 ?>
