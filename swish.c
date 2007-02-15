@@ -180,7 +180,7 @@ static void sw_handle_dtor(void *object TSRMLS_DC) /* {{{ */
 		SwishClose(h->h);
 		h->h = NULL;
 	}
-	
+
 	zend_object_std_dtor(&h->std TSRMLS_CC);
 	efree(h);
 }
@@ -196,7 +196,7 @@ static void sw_search_dtor(void *object TSRMLS_DC) /* {{{ */
 	}
 
 	zend_objects_store_del_ref(&s->refhandle TSRMLS_CC);	
-	
+
 	zend_object_std_dtor(&s->std TSRMLS_CC);
 	efree(s);
 }
@@ -212,7 +212,7 @@ static void sw_results_dtor(void *object TSRMLS_DC) /* {{{ */
 	}
 
 	zend_objects_store_del_ref(&r->refhandle TSRMLS_CC);	
-	
+
 	zend_object_std_dtor(&r->std TSRMLS_CC);
 	efree(r);
 }
@@ -303,7 +303,7 @@ static void php_sw_results_indexes_to_array(struct php_sw_results *r, zval **z_i
 	const char **index_names;
 	SWISH_HEADER_VALUE header_value;
 	SWISH_HEADER_TYPE  header_type;
-	
+
 	index_names = SwishIndexNames(r->h->h);
 
 	MAKE_STD_ZVAL(*z_indexes);
@@ -312,22 +312,22 @@ static void php_sw_results_indexes_to_array(struct php_sw_results *r, zval **z_i
 	while (index_names && *index_names) {
 		MAKE_STD_ZVAL(index);
 		array_init(index);
-		
+
 		MAKE_STD_ZVAL(ztmp);
 		ZVAL_STRING(ztmp, (char *)(*index_names), 1);
-		
+
 		add_assoc_zval(index, "name", ztmp);
 
 		header_type = SWISH_LIST;
 		header_value = SwishParsedWords(r->r, *index_names);
 		php_sw_header_to_zval(header_value, header_type, &element, 1 TSRMLS_CC);
 		add_assoc_zval(index, "parsed_words", element);
-		
+
 		header_type = SWISH_LIST;
 		header_value = SwishRemovedStopwords(r->r, *index_names);
 		php_sw_header_to_zval(header_value, header_type, &element, 1 TSRMLS_CC);
 		add_assoc_zval(index, "removed_stop_words", element);
-	
+
 		add_next_index_zval(*z_indexes, index);
 		index_names++;
 	}
@@ -374,16 +374,16 @@ static HashTable *php_sw_results_get_properties(zval *object TSRMLS_DC) /* {{{ *
 	struct php_sw_results *r;
 	zval *tmp;
 
-    r = (struct php_sw_results*)zend_objects_get_address(object TSRMLS_CC);
+	r = (struct php_sw_results*)zend_objects_get_address(object TSRMLS_CC);
 
 	MAKE_STD_ZVAL(tmp);
 	ZVAL_LONG(tmp, SwishHits(r->r));
 
 	zend_hash_update(r->std.properties, "hits", sizeof("hits"), (void *)&tmp, sizeof(zval *), NULL);
-	
+
 	php_sw_results_indexes_to_array(r, &tmp TSRMLS_CC);
 	zend_hash_update(r->std.properties, "indexes", sizeof("indexes"), (void *)&tmp, sizeof(zval *), NULL);
-    return r->std.properties;
+	return r->std.properties;
 }
 /* }}} */
 
@@ -421,7 +421,7 @@ static void php_sw_prop_to_zval(struct php_sw_result *r, char *name , zval **pro
 	}
 }
 /* }}}  */
-	
+
 static zval *php_sw_result_read_property(zval *object, zval *member, int type TSRMLS_DC) /* {{{ */
 {
 	struct php_sw_result *r;
@@ -439,7 +439,7 @@ static zval *php_sw_result_read_property(zval *object, zval *member, int type TS
 	}
 
 	php_sw_prop_to_zval(r, Z_STRVAL_P(member), &retval TSRMLS_CC);
-	
+
 	if (Z_TYPE_P(retval) == IS_NULL) {
 		/* not found */
 		zval_ptr_dtor(&retval);
@@ -463,7 +463,7 @@ static HashTable *php_sw_result_get_properties(zval *object TSRMLS_DC) /* {{{ */
 	SWISH_META_LIST meta;
 	char *name;
 
-    r = (struct php_sw_result*)zend_objects_get_address(object TSRMLS_CC);
+	r = (struct php_sw_result*)zend_objects_get_address(object TSRMLS_CC);
 
 	meta = SwishResultPropertyList(r->r);
 
@@ -474,7 +474,7 @@ static HashTable *php_sw_result_get_properties(zval *object TSRMLS_DC) /* {{{ */
 		meta++;
 	}
 
-    return r->std.properties;
+	return r->std.properties;
 }
 /* }}} */
 
@@ -484,7 +484,7 @@ static void php_sw_handle_indexes_to_array(struct php_sw_handle *h, zval **z_ind
 	const char **index_names, **header_names, **curr_header;
 	SWISH_HEADER_VALUE header_value;
 	SWISH_HEADER_TYPE  header_type;
-	
+
 	index_names = SwishIndexNames(h->h);
 	header_names = SwishHeaderNames(h->h);
 
@@ -494,10 +494,10 @@ static void php_sw_handle_indexes_to_array(struct php_sw_handle *h, zval **z_ind
 	while (index_names && *index_names) {
 		MAKE_STD_ZVAL(index);
 		array_init(index);
-		
+
 		MAKE_STD_ZVAL(ztmp);
 		ZVAL_STRING(ztmp, (char *)(*index_names), 1);
-		
+
 		add_assoc_zval(index, "name", ztmp);
 
 		MAKE_STD_ZVAL(ztmp);
@@ -559,7 +559,7 @@ static HashTable *php_sw_handle_get_properties(zval *object TSRMLS_DC) /* {{{ */
 
 	php_sw_handle_indexes_to_array(h, &z_indexes TSRMLS_CC);
 	zend_hash_update(h->std.properties, "indexes", sizeof("indexes"), (void *)&z_indexes, sizeof(zval *), NULL);
-	
+
 	return h->std.properties;
 }
 /* }}} */
@@ -638,7 +638,7 @@ static PHP_METHOD(Swish, prepare)
 		}
 		return;
 	}
-	
+
 	object_init_ex(return_value, ce_sw_search);
 	return_value->refcount = 1;
 	return_value->is_ref = 1;
@@ -918,7 +918,7 @@ static PHP_METHOD(SwishResults, nextResult)
 /* }}} */
 
 /* {{{ proto array SwishResults::getParsedWords(string indexname)
-    Returns the tokenized query */
+   Returns the tokenized query */
 static PHP_METHOD(SwishResults, getParsedWords)
 {
 	struct php_sw_results *r;
@@ -934,7 +934,7 @@ static PHP_METHOD(SwishResults, getParsedWords)
 	if (!r->r) {
 		RETURN_FALSE;
 	}
-	
+
 	value = SwishParsedWords(r->r, index);
 	if (!value.string_list) {
 		RETURN_FALSE;
@@ -945,7 +945,7 @@ static PHP_METHOD(SwishResults, getParsedWords)
 /* }}} */
 
 /* {{{ proto array SwishResults::getRemovedStopwords(string indexname)
-    Returns a list of stopwords removed from the query */
+   Returns a list of stopwords removed from the query */
 static PHP_METHOD(SwishResults, getRemovedStopwords)
 {
 	struct php_sw_results *r;
@@ -961,7 +961,7 @@ static PHP_METHOD(SwishResults, getRemovedStopwords)
 	if (!r->r) {
 		RETURN_FALSE;
 	}
-	
+
 	value = SwishRemovedStopwords(r->r, index);
 	if (!value.string_list) {
 		RETURN_FALSE;
@@ -1101,7 +1101,7 @@ ZEND_GET_MODULE(swish)
 #endif
 
 #define PHP_SWISH_CLASS_CONST(name, value) \
-	zend_declare_class_constant_long(ce_sw_handle, name, sizeof(name)-1, (long)value TSRMLS_CC);
+		zend_declare_class_constant_long(ce_sw_handle, name, sizeof(name)-1, (long)value TSRMLS_CC);
 
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(swish)
@@ -1120,16 +1120,16 @@ PHP_MINIT_FUNCTION(swish)
 	php_sw_handle_obj_handlers.clone_obj = NULL;
 	php_sw_handle_obj_handlers.read_property = php_sw_handle_read_property;
 	php_sw_handle_obj_handlers.get_properties = php_sw_handle_get_properties;
-	
+
 	memcpy(&php_sw_results_obj_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	php_sw_results_obj_handlers.clone_obj = NULL;
 	php_sw_results_obj_handlers.read_property = php_sw_results_read_property;
 	php_sw_results_obj_handlers.get_properties = php_sw_results_get_properties;
-	
+
 
 	INIT_CLASS_ENTRY(ce, "SwishException", NULL);
 	ce_sw_exception = zend_register_internal_class_ex(&ce, 
-				zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
+			zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "Swish", sw_handle_methods);
 	ce_sw_handle = zend_register_internal_class(&ce TSRMLS_CC);
@@ -1175,8 +1175,7 @@ PHP_MINIT_FUNCTION(swish)
 }
 /* }}} */
 
-/* {{{ PHP_MINFO_FUNCTION
- */
+/* {{{ PHP_MINFO_FUNCTION */
 PHP_MINFO_FUNCTION(swish)
 {
 	php_info_print_table_start();
