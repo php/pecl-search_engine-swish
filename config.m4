@@ -8,6 +8,17 @@ if test "$PHP_SWISH" != "no"; then
   
   if test "$PHP_SWISH" = "yes"; then
     SWISH_CONFIG=`$php_shtool path swish_config`
+
+    if test -z "$SWISH_CONFIG"; then 
+        for i in /usr/local /usr; do
+            if test -f $i/bin/swish-config; then
+              PHP_SWISH=$i;
+              SWISH_CONFIG=$i/bin/swish-config;
+              break;
+            fi
+        done
+    fi
+
   else
 
     for i in "$PHP_SWISH" "$PHP_SWISH/swish-config" "$PHP_SWISH/bin/swish-config" ; do
@@ -26,7 +37,7 @@ if test "$PHP_SWISH" != "no"; then
   PHP_EVAL_INCLINE($SWISH_INC)
 
   SWISH_LIBS=`"$SWISH_CONFIG" --libs`
-  PHP_EVAL_LIBLINE($SWISH_LIBS)
+  PHP_EVAL_LIBLINE($SWISH_LIBS, SWISH_SHARED_LIBADD)
 
   old_CFLAGS=$CFLAGS
   CFLAGS="$SWISH_INC"
