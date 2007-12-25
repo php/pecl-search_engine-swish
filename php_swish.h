@@ -35,40 +35,6 @@ extern zend_module_entry swish_module_entry;
 #include "TSRM.h"
 #endif
 
-PHP_MINIT_FUNCTION(swish);
-PHP_MSHUTDOWN_FUNCTION(swish);
-PHP_RINIT_FUNCTION(swish);
-PHP_RSHUTDOWN_FUNCTION(swish);
-PHP_MINFO_FUNCTION(swish);
-
-PHP_FUNCTION(confirm_swish_compiled);	/* For testing, remove later. */
-
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
-
-ZEND_BEGIN_MODULE_GLOBALS(swish)
-	long  global_value;
-	char *global_string;
-ZEND_END_MODULE_GLOBALS(swish)
-*/
-
-/* In every utility function you add that needs to use variables 
-   in php_swish_globals, call TSRMLS_FETCH(); after declaring other 
-   variables used by that function, or better yet, pass in TSRMLS_CC
-   after the last function argument and declare your utility function
-   with TSRMLS_DC after the last declared argument.  Always refer to
-   the globals in your function as SWISH_G(variable).  You are 
-   encouraged to rename these macros something shorter, see
-   examples in any other php module directory.
-*/
-
-#ifdef ZTS
-#define SWISH_G(v) TSRMG(swish_globals_id, zend_swish_globals *, v)
-#else
-#define SWISH_G(v) (swish_globals.v)
-#endif
-
 #endif	/* PHP_SWISH_H */
 
 
