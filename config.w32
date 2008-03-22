@@ -1,7 +1,7 @@
 // $Id$
 // vim:ft=javascript
 
-ARG_WITH("swish", "Swish-e support", "yes");
+ARG_WITH("swish", "Swish-e support", "no");
 
 if (PHP_SWISH == "yes") {
 	if (CHECK_LIB("libswish-e.lib", "swish") &&
