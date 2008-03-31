@@ -1090,7 +1090,7 @@ zend_module_entry swish_module_entry = {
 	NULL,
 	PHP_MINFO(swish),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.2.0",
+	PHP_SWISH_VERSION,
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
@@ -1180,6 +1180,7 @@ PHP_MINFO_FUNCTION(swish)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "swish support", "enabled");
+	php_info_print_table_row(2, "extension version", PHP_SWISH_VERSION);
 	/* DO NOT REMOVE THIS URL!
 	 * It is here for license compliance */
 	php_info_print_table_row(2, "source available from", "http://swish-e.org");
