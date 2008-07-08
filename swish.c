@@ -69,6 +69,12 @@ struct php_sw_result {
 };
 /* }}} */
 
+#if PHP_VERSION_ID < 50300
+# define Z_SET_REFCOUNT_P(pz, rc) pz->refcount = rc
+# define Z_SET_ISREF_P(pz)        pz->is_ref = 1
+# define Z_UNSET_ISREF_P(pz)      pz->is_ref = 0
+#endif
+
 /* {{{ internal functions */
 static int sw_throw_exception(struct php_sw_handle *h TSRMLS_DC) /* {{{ */
 {
@@ -353,10 +359,10 @@ static zval *php_sw_results_read_property(zval *object, zval *member, int type T
 	if (Z_STRLEN_P(member) == (sizeof("hits") - 1) && !memcmp(Z_STRVAL_P(member), "hits", Z_STRLEN_P(member))){
 		MAKE_STD_ZVAL(retval);
 		ZVAL_LONG(retval, SwishHits(r->r));
-		retval->refcount = 0;
+		Z_SET_REFCOUNT_P(retval, 0);
 	} else if (Z_STRLEN_P(member) == (sizeof("indexes") - 1) && !memcmp(Z_STRVAL_P(member), "indexes", Z_STRLEN_P(member))) {
 		php_sw_results_indexes_to_array(r, &retval TSRMLS_CC);
-		retval->refcount = 0;
+		Z_SET_REFCOUNT_P(retval, 0);
 	} else {
 		std_hnd = zend_get_std_object_handlers();
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
@@ -446,7 +452,7 @@ static zval *php_sw_result_read_property(zval *object, zval *member, int type TS
 		std_hnd = zend_get_std_object_handlers();
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
 	} else {
-		retval->refcount = 0;
+		Z_SET_REFCOUNT_P(retval, 0);
 	}
 
 	if (member == &tmp_member) {
@@ -537,7 +543,7 @@ static zval *php_sw_handle_read_property(zval *object, zval *member, int type TS
 
 	if (Z_STRLEN_P(member) == (sizeof("indexes") - 1) && !memcmp(Z_STRVAL_P(member), "indexes", Z_STRLEN_P(member))){
 		php_sw_handle_indexes_to_array(h, &retval TSRMLS_CC);
-		retval->refcount = 0;
+		Z_SET_REFCOUNT_P(retval, 0);
 	} else {
 		std_hnd = zend_get_std_object_handlers();
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
@@ -640,8 +646,8 @@ static PHP_METHOD(Swish, prepare)
 	}
 
 	object_init_ex(return_value, ce_sw_search);
-	return_value->refcount = 1;
-	return_value->is_ref = 1;
+	Z_SET_REFCOUNT_P(return_value, 1);
+	Z_SET_ISREF_P(return_value);
 
 	s = zend_object_store_get_object(return_value TSRMLS_CC);
 	s->s = search;
@@ -678,8 +684,8 @@ static PHP_METHOD(Swish, query)
 	}
 
 	object_init_ex(return_value, ce_sw_results);
-	return_value->refcount = 1;
-	return_value->is_ref = 1;
+	Z_SET_REFCOUNT_P(return_value, 1);
+	Z_SET_ISREF_P(return_value);
 	r = zend_object_store_get_object(return_value TSRMLS_CC);
 	r->r = results;
 	r->h = h;
@@ -842,8 +848,8 @@ static PHP_METHOD(SwishSearch, execute)
 	}
 
 	object_init_ex(return_value, ce_sw_results);
-	return_value->refcount = 1;
-	return_value->is_ref = 1;
+	Z_SET_REFCOUNT_P(return_value, 1);
+	Z_SET_ISREF_P(return_value);
 	r = zend_object_store_get_object(return_value TSRMLS_CC);
 	r->r = results;
 	r->h = s->h;
@@ -906,8 +912,8 @@ static PHP_METHOD(SwishResults, nextResult)
 	}
 
 	object_init_ex(return_value, ce_sw_result);
-	return_value->refcount = 1;
-	return_value->is_ref = 1;
+	Z_SET_REFCOUNT_P(return_value, 1);
+	Z_SET_ISREF_P(return_value);
 	result = zend_object_store_get_object(return_value TSRMLS_CC);
 	result->r = res;
 	result->h = r->h;
@@ -1077,25 +1083,6 @@ static zend_function_entry swish_functions[] = {
 };
 /* }}} */
 
-/* {{{ swish_module_entry */
-zend_module_entry swish_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
-	STANDARD_MODULE_HEADER,
-#endif
-	"swish",
-	swish_functions,
-	PHP_MINIT(swish),
-	NULL,
-	NULL,
-	NULL,
-	PHP_MINFO(swish),
-#if ZEND_MODULE_API_NO >= 20010901
-	PHP_SWISH_VERSION,
-#endif
-	STANDARD_MODULE_PROPERTIES
-};
-/* }}} */
-
 #ifdef COMPILE_DL_SWISH
 ZEND_GET_MODULE(swish)
 #endif
@@ -1186,6 +1173,25 @@ PHP_MINFO_FUNCTION(swish)
 	php_info_print_table_row(2, "source available from", "http://swish-e.org");
 	php_info_print_table_end();
 }
+/* }}} */
+
+/* {{{ swish_module_entry */
+zend_module_entry swish_module_entry = {
+#if ZEND_MODULE_API_NO >= 20010901
+	STANDARD_MODULE_HEADER,
+#endif
+	"swish",
+	swish_functions,
+	PHP_MINIT(swish),
+	NULL,
+	NULL,
+	NULL,
+	PHP_MINFO(swish),
+#if ZEND_MODULE_API_NO >= 20010901
+	PHP_SWISH_VERSION,
+#endif
+	STANDARD_MODULE_PROPERTIES
+};
 /* }}} */
 
 /*
