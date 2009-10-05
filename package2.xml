@@ -29,20 +29,18 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>wez@php.net</email>
   <active>yes</active>
  </lead>
- <date>2007-05-17</date>
- <time>19:00:00</time>
+ <date>2009-10-05</date>
+ <time>12:00:00</time>
  <version>
-  <release>0.3.0</release>
-  <api>0.3.0</api>
+  <release>0.4.0</release>
+  <api>0.4.0</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
- <notes>
-  - Improved swish-config autodetection.
-  - Fixed shared build.
+ <notes>- Added PHP 5.3.x support.
  </notes>
  <contents>
   <dir name="/">
@@ -97,6 +95,22 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <configureoption default="autodetect" name="with-swish" prompt="Please provide the path to swish-config" />
  </extsrcrelease>
  <changelog>
+  <release>
+   <date>2007-05-17</date>
+   <time>19:00:00</time>
+   <version>
+    <release>0.3.0</release>
+    <api>0.3.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>- Improved swish-config autodetection.
+- Fixed shared build.
+   </notes>
+  </release>
   <release>
    <date>2007-02-21</date>
    <time>20:00:00</time>
