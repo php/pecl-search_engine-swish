@@ -25,7 +25,7 @@
 extern zend_module_entry swish_module_entry;
 #define phpext_swish_ptr &swish_module_entry
 
-#define PHP_SWISH_VERSION "0.4.0-dev"
+#define PHP_SWISH_VERSION "0.5.0"
 
 #ifdef PHP_WIN32
 #define PHP_SWISH_API __declspec(dllexport)
