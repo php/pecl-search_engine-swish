@@ -340,7 +340,11 @@ static void php_sw_results_indexes_to_array(struct php_sw_results *r, zval **z_i
 }
 /* }}} */
 
-static zval *php_sw_results_read_property(zval *object, zval *member, int type TSRMLS_DC) /* {{{ */
+#if PHP_VERSION_ID >= 50400
+static zval *php_sw_results_read_property(zval *object, zval *member, int type, const zend_literal *key TSRMLS_DC) /* {{{ */
+#else
+static zval *php_sw_results_read_property(zval *object, zval *member, int type TSRMLS_DC)
+#endif
 {
 	struct php_sw_results *r;
 	zval tmp_member;
@@ -365,7 +369,12 @@ static zval *php_sw_results_read_property(zval *object, zval *member, int type T
 		Z_SET_REFCOUNT_P(retval, 0);
 	} else {
 		std_hnd = zend_get_std_object_handlers();
+#if PHP_VERSION_ID >= 50400
+		retval = std_hnd->read_property(object, member, type, key TSRMLS_CC);
+#else
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
+#endif
+
 	}
 
 	if (member == &tmp_member) {
@@ -428,7 +437,11 @@ static void php_sw_prop_to_zval(struct php_sw_result *r, char *name , zval **pro
 }
 /* }}}  */
 
-static zval *php_sw_result_read_property(zval *object, zval *member, int type TSRMLS_DC) /* {{{ */
+#if PHP_VERSION_ID >= 50400
+static zval *php_sw_result_read_property(zval *object, zval *member, int type, const zend_literal *key TSRMLS_DC) /* {{{ */
+#else
+static zval *php_sw_result_read_property(zval *object, zval *member, int type TSRMLS_DC)
+#endif
 {
 	struct php_sw_result *r;
 	zval tmp_member;
@@ -450,7 +463,11 @@ static zval *php_sw_result_read_property(zval *object, zval *member, int type TS
 		/* not found */
 		zval_ptr_dtor(&retval);
 		std_hnd = zend_get_std_object_handlers();
+#if PHP_VERSION_ID >= 50400
+		retval = std_hnd->read_property(object, member, type, key TSRMLS_CC);
+#else
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
+#endif
 	} else {
 		Z_SET_REFCOUNT_P(retval, 0);
 	}
@@ -525,7 +542,11 @@ static void php_sw_handle_indexes_to_array(struct php_sw_handle *h, zval **z_ind
 }
 /* }}} */
 
-static zval *php_sw_handle_read_property(zval *object, zval *member, int type TSRMLS_DC) /* {{{ */
+#if PHP_VERSION_ID >= 50400
+static zval *php_sw_handle_read_property(zval *object, zval *member, int type, const zend_literal *key TSRMLS_DC) /* {{{ */
+#else
+static zval *php_sw_handle_read_property(zval *object, zval *member, int type TSRMLS_DC)
+#endif
 {
 	struct php_sw_handle *h;
 	zval tmp_member;
@@ -546,7 +567,11 @@ static zval *php_sw_handle_read_property(zval *object, zval *member, int type TS
 		Z_SET_REFCOUNT_P(retval, 0);
 	} else {
 		std_hnd = zend_get_std_object_handlers();
+#if PHP_VERSION_ID >= 50400
+		retval = std_hnd->read_property(object, member, type, key TSRMLS_CC);
+#else
 		retval = std_hnd->read_property(object, member, type TSRMLS_CC);
+#endif
 	}
 
 	if (member == &tmp_member) {
